@@ -52,6 +52,18 @@ class AadOAuth {
     return Token.tokenIsValid(_token);
   }
 
+  Future<String> checkToken() async {
+    if (!Token.tokenIsValid(_token)) {
+      _token = await _authStorage.loadTokenToCache();
+      if (_token != null) await _performRefreshAuthFlow();
+    }
+    if (_token != null) {
+      return _token.accessToken;
+    } else {
+      return null;
+    }
+  }
+
   Future<void> logout() async {
     // await _authStorage.clear();
     // await _requestCode.clearCookies();
